@@ -1,0 +1,131 @@
+---
+title: "Lab 1 R Demo"
+author: Jacob Coutts
+format: docx
+editor: visual
+---
+
+# Why Should I Learn R?
+
+1.  Cost: R is free!
+
+2.  Promotes reproducible research (self-documenting, repeatable).
+
+    -   **Self-documenting**: You can see the code you ran previously.
+    -   **Repeatable**: You can run the same code and (typically) generate the same results.
+    -   **Reproducibility and replicability** are big problems in science right now, particularly in the social sciences.
+
+3.  Scalable
+
+    -   R can handle small or BIG data sets!
+
+4.  Open source (continually improved)
+
+    -   A big community uses R and creates new, updated tools and packages for others to use (e.g., artificial intelligence, machine learning, mediation analysis).
+
+5.  Becoming the norm in psychology.
+
+    -   Coding is becoming the most in-demand skill across industry and academia, psychology or otherwise.
+    -   Learning one programming language will improve your general coding ability and help you learn other popular languages (e.g., Python).
+
+# What is a code chunk/block?
+
+```{r collapse=FALSE}
+# comment
+# ```{r} to start an r chunk
+# ``` to close an r chunk
+
+```
+
+-   When you are working with a Quarto file, you can write your code in this grey space above.
+-   A code chunk is like a text box that you can write R commands in. Quarto documents (formerly R Markdown) are helpful because they allow us to incorporate document elements (e.g., writing like you see here) with R outputs (generated from code in chunks). It's a one-stop shop for research reporting!
+
+## Example Code in R
+
+We can do math functions, write words, and even add comments for ourselves in the code chunks. Comments start with a \# sign and are not interpreted by R. Comments are useful for communicating to others what specific lines of code do and are incredibly important for reproducibility. Always comment your code. Too many comments are better than too few.
+
+```{r}
+1+1
+((1+1) / 2) * 3
+2+3
+
+#This is an example 1 of R Code Block
+
+"You can also write text in R using quotation marks"
+```
+
+# Objects in R
+
+One of the major pros of R (and other languages) is that we can write information into objects that we can use later. We will use this a lot throughout this course! To assign values to objects, we typically use \<- in R. (You can use = as well, but there are some cases where these don't do the same thing.) Once the object is created, it is stored in the Global Environment (a repository of objects, functions, etc.) and we can reference them later in our code. You can see the Global Environment and its contents in the top right pane.
+
+## There are many types of objects
+
+-   **Scalars**: Objects/vectors with a single element (e.g., 5, "a", or "the dog wears a hat" are all scalars). An informal object that we will call "vectors" for the purposes of this class.
+-   **Vectors**: Several elements or scalars concatenated together (e.g., three 5s, 2 As, or two different sentences stacked on each other are a vector). Vectors must contain the same type of element. If you try to store text and numbers together, R will treat the number(s) you entered as text. There are subclasses of vectors based on the elements. If there is text, it will be a character vector. If it consists of numbers, it may be an "integer" vector, so on and so fourth.
+-   **Matrices**: Can be thought of as a collection of vectors of the same length. Matrices have a set number of rows and columns and must consist of the same type of element (e.g., all numeric or all character). They are two-dimensional arrays (an object we will not talk about in this class).
+-   **Data frames**: R's principal means of data storage. (Think of them like an Excel spreadsheet.) Data frames can consist of different data types and you can apply special commands to them that will be useful in the future. They are essenetially two-dimensional lists.
+-   **Other**: There are other types of objects, such as lists, that are beyond the scope of this class. It is not essential that you understand the nuances between these different types of objects, so long as you understand that certain errors may be generated based on the object you're using.
+
+*You can generally see what type of object R classifies something as with the class() command. You can also use is.vector(), is.data.frame(), is.matrix(), etc. to see whether an object is specifically that data structure.*
+
+```{r}
+object1 <- matrix(c(1,1,1),nrow=1,ncol=3) # create a matrix with three columns and a row, filled with the number 1
+class(object1) # says object is a matrix
+object2 <- data.frame(object1) # turn object1 into a data frame and assign it to a variable called object2
+class(object2) # says it's a list because it is two dimensional
+is.data.frame(object2) # this command says whether the object is a data frame, which object2 is 
+object3 <- c("k",78,"hello!") # create a character vector, R will convert 78 from a number to a character "78"
+typeof(object3) # character vector
+object4 <- c(1,2) # vector of the numbers 1 and 2 
+class(object4) # says it is a numeric vector
+```
+
+*Note: R is case sensitive, and thus extremely sensitive to typos, extra spaces, or periods/commas. Even one of these misplaced will cause R to thinks it's a completely different thing you are referencing (or it will not know what you are referencing at all). As frustrating as it can be, R will do exactly what you tell it, and most errors have only you to blame (e.g., for forgetting a comma).*
+
+# Loading in Datasets
+
+We will do this each time we run an analysis.
+
+```{r}
+# install.packages("readr") # install the readr package if it isn't already
+library(readr) # read in the already installed readr package
+# readr::read_csv() if you want to do it this way
+sampledata <- read.table("SampleDataLab1.csv",sep=",",header=TRUE)
+class(sampledata) # it is a data frame
+summary(sampledata) # returns summary statistics
+```
+
+Some labs will use the read_csv() command to read in data. If you to use the read_csv() command, you must have readr installed (using the **install.packages("readr")** command if it is not already installed) to run **library(readr)**. In order for read_csv to work, you need to load readr with the **library()** command above. In other words, if you try to use a function from a package you haven't installed or subsequently loaded, you will generate an error.
+
+The **readr::** text before read_csv means that the function you are calling comes from the readr package. Most of the time, this is optional, however, it can be useful to always include this so you remember where specific functions come from (and in the case where there is the same function name across multiple packages that you have loaded, it calls the one you want).
+
+In this class, we will try to use base R whenever possible. We don't need a package to read .csv data files into R, so you can run the code above without worrying whether a package is up to date or going to change its syntax.
+
+## Making vectors from our data
+
+First open your data, this can be done by either clicking it in your Global Environment or using the code below. Hint: Be sure to comment this code out before you knit your file!
+
+```{r}
+#View(sampledata)
+```
+
+Then, you want to specify what variable you are interested in: new name \<- data\$variable
+
+```{r}
+predictor <- sampledata$Mindfulness
+outcome <- sampledata$Positive.Self.Regard
+```
+
+These should now be in the Global Environment. You can manipulate them as you would any object in R.
+
+```{r}
+predictor*2 # will only return each element of this vector doubled, it will not save to anything
+double_predictor <- predictor*2 # now is stored in the global environment
+mean(outcome) # returns the mean of the "outcome" variable
+```
+
+# Rendering
+
+Render to a Word document so you can refer back later!
+
+### End of Script
