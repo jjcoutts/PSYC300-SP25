@@ -1,0 +1,42 @@
+---
+title: "Calculating Cronbach's alpha (Reliability Internal Consistency)"
+author: Jacob Coutts
+format: docx
+editor: visual
+---
+
+-   Use this to calculate Cronbach's alpha for a multi-item measurement scale.
+
+## Reliability
+
+Recall that scales should produce relliable *data* and that reliability is a property of data and not the scale itself. For us to truly feel confident in the internal consistency of our participants' responses, we need to calculate some estimate of that. As we've discussed in lecture, there are multiple approaches, including Cronbach's alpha and McDonald's omega. These both assume that the scale is unidimensonal. If the scale is not, the estimates will be biased or entirely wrong. Cronbach's alpha is a worse estimate of reliability (because it assumes each item contirbutes the same to the overall score/scale), but it is also easier to compute. We will be calculating Cronbach's alpha for this class. (Research methods is hard enough already, is it not?)
+
+You will need to access to your cleaned data from last week. If you do not have it, find it or reclean it. I will show you an example below and then give you the rough outline for how to do it for your data.
+
+We will need the *alpha* function from the **psych** package to calculate alpha.
+
+```{r}
+### load in the data
+example_data <- read.table("example_cleaned_data.csv", header = TRUE, sep = ",")
+
+# now, let's explore the data
+summary(example_data)
+
+# now let's load in the package 
+library(psych)
+
+# we need to index the columns we're interested in because the function requires a data frame input
+psych::alpha(example_data[,c("pred_1","pred_2","pred_3","pred_4")])$total$raw_alpha # alpha is .50 - is this good? 
+
+# we need the double $ index because of how the model object stores alpha 
+
+psych::alpha(example_data[,c("outcome_1","outcome_2","outcome_3","outcome_4","outcome_5")])$total$raw_alpha # alpha is .912. Is this good? 
+```
+
+[**CAUTION:**]{.underline} If you have reverse coded items, you need to make sure they are reverse coded before running alpha. It will obviously tank your reliability because they're answering the opposite of how they should.
+
+```{r}
+# now it's your turn. Use the above to structure your code.
+```
+
+### End of script

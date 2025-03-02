@@ -1,0 +1,238 @@
+---
+title: "Subsetting in R"
+author: Jacob Coutts
+format: docx
+editor: visual
+---
+
+# Section One: Function Review & Referencing Variables
+
+-   *We will start this lesson by using the PSYC300_dataset.csv file on our ELMS site.*
+
+## Let's begin by opening/loading dataset
+
+```{r}
+dat.work <- read.table("PSYC300_dataset.csv",sep=",",header=TRUE) # read in data, make sure the file path routes to the appropriate location in ELMS
+colnames(dat.work)[1] <- "examScore"
+```
+
+## Lets review related functions
+
+```{r}
+# As a reminder, functions are shorthand commands that allow us to perform complex operations with small amounts of code. 
+
+# colnames() is a function that will show us the column (variable) names in the dataset. Below, dat.work is an argument of that function. dat.work is the dataset we read in above.
+colnames(dat.work) # See all the variable names in the dataset
+
+# summary commands
+str(dat.work) # Allows you to see the structure of a data frame. The argument, like for colnames, is our dataset name
+summary(dat.work) # See numerical/character/factor summary of all variables in dataset
+
+# head/tail functions
+head(dat.work) # See first few rows
+tail(dat.work) # See last few rows
+```
+
+## Now lets select specific Variables (columns) in the dataset
+
+```{r}
+# This is how we extract the entire variable by name
+dat.work$minSleep
+dat.work$Motivation
+```
+
+## Now lets select specific observations (rows) in the dataset
+
+```{r}
+# When indexing multidimensional objects (i.e., NOT scalars or vectors), there are usually two dimensions to the subset. The first will call the requested row(s) and the second will call the requested column(s). Leaving the other dimension blank will call EVERY row or column, respectively.
+
+# Note: [Row, Column] is the order of the index
+
+dat.work[1,] # This will pull the ENTIRE first row since there is no column index. (i.e., it will contain all the variable values for the first unit of measurement)
+dat.work[,1] # This will pul the ENTIRE first column since there is no row index. (i.e., it will contain all the observations for all units on the first variable)
+
+# Extracting specific variables & rows
+# Here we extract the first row and column
+dat.work[1,1]
+
+# Here we extract row 1 to row 3 & column 1 to column 3
+dat.work[1:3, 1:3]
+# this will give a 3 x 3 data structure
+
+# This is how we extract an entire variable (or group of variables) by position
+dat.work[,2] # grabs the second column
+dat.work[,3] # grabs the third column
+dat.work[,2:3] # We can use shorthand to select columns 2 through 3
+
+# Extracting specific rows
+dat.work[1,] # grab the first row
+dat.work[5,] # grab the fifth row 
+dat.work[1:5,] # grab the first through the fifth rows
+dat.work[1,2] # grab the first row and the second column 
+```
+
+# Section Two: Extracting and building vectors/dataframes
+
+## Creating vectors from Variables in datasets
+
+```{r}
+# Extract minutes of sleep from the data frame
+Sleep <- dat.work$minSleep
+Sleep
+
+# Extract student motivation from the data frmae
+Motivation <- dat.work$motivation
+Motivation
+
+# You can do this for any variables you're interested in 
+```
+
+## Selecting specific parts of vectors
+
+```{r}
+# As we mentioned on the first day of class, vectors are one dimensional and do not have rows or columns. To subset, you select the units of the vector inside of closed brackets []. 
+
+# First three observations in sleep
+Sleep[1:3]
+
+# First three observations in motivation 
+Motivation[1:3]
+```
+
+## Creating new vectors part 1
+
+-   Here we will do some basic arithmetic using R to create new vectors based on existing variables.
+
+```{r}
+# Creating new vectors by performing operations on data 
+
+# Divide sleep by 2
+sleep_half <- dat.work$minSleep/2
+# Multiply motivation by 2
+motivation_double <- dat.work$motivation*2
+# Combine values from multiple columns
+combining_vectors <- dat.work$minSleep + dat.work$motivation + dat.work$examScore
+
+# We can also do this by indexing position in the dataset
+notModality_double <- dat.work[,6]*2
+
+# You can even assign this to a new column in the dataset 
+dat.work$new <- dat.work$examScore + 1
+```
+
+# Section Three: Subsetting
+
+## Factor subsetting
+
+```{r}
+# load the psych library to use the describe.by command, use install.packages("psych") if you do not already have it installed
+library(psych)
+
+describe.by(dat.work, dat.work$statAnxiety)
+
+# This produces three datasets which reflect a summary of the variables per factor for stats anxiety (one dataset per factor)
+# 1 - Low Anxiety #Mean = 80.33
+# 2 - Medium Anxiety #Mean = 89.73
+# 3 - High Anxiety #Mean = 76.43
+```
+
+## Specific method to subset variables by factors
+
+-   **Here we look at exam scores by each factor of statistics anxiety by directly referencing the factor we are interested in using \[ \] and then ==**
+
+```{r}
+######## Subset factors directly using the [] function
+# Exam scores for students with low stat anxiety (stat anxiety == 1)
+dat.work$examScore[dat.work$statAnxiety == 1]
+# Can do the same for stat anxiety values 2 and 3 
+
+######## Mean of scores for each factor 
+# Mean of exam scores for students with medium stat anxiety (stat anxiety == 2)
+mean(dat.work$examScore[dat.work$statAnxiety == 2])
+# Can do the same for stat anxiety values 1 and 3
+```
+
+## We can use these subsets when we examine correlations for different groups! This is very useful when we do data analysis.
+
+```{r}
+# Correlation test between sleep and test scores
+cor <- cor(dat.work$examScore, dat.work$minSleep)
+paste("The correlation between sleep and exam scores is",round(cor,2)) # Paste allows us to print text and R objects/numbers at the same time, round is a function that rounds the elements of whatever object you want to the specified precision (decimal place)
+```
+
+## We can use these subsets when we examine correlations for different groups! This is very useful when we do data analysis.
+
+```{r}
+# Correlation between sleep and test scores for people who had low  stats anxietyc
+cor1 <- cor.test(dat.work$examScore[dat.work$statAnxiety == 1], dat.work$minSleep[dat.work$statAnxiety == 1])
+cor1
+
+# Correlation between sleep and test scores for people who had high stats anxiety
+cor3 <- cor.test(dat.work$examScore[dat.work$statAnxiety == 3], dat.work$minSleep[dat.work$statAnxiety == 3])
+cor3
+
+# cor.test() will produce the same correlation value as cor(), but it also produces test information for the correlation (e.g., confidence intervals, t statistic)
+
+# Note: Stat Anxiety
+# 1 = Low Anxiety
+# 2 = Medium Anxiety
+# 3 = High Anxiety
+```
+
+## We can use what are called logical operators for subsetting as well.
+
+**For instance, equal to (==) and not equal to (!=)**
+
+```{r}
+# Subset for stat anxiety values equal to 1 ("low" anxiety)
+mean(dat.work$examScore[dat.work$statAnxiety == 1])
+
+# Subset for stat anxiety values NOT equal to 1 (Not "low" Anxiety)
+mean(dat.work$examScore[dat.work$statAnxiety != 1])
+```
+
+**AND logical operator and OR logical operator (& for AND; \| for OR)**
+
+```{r}
+# Subset dataset for exam scores where stats anxiety is low and notes were hand written on paper
+dat.work$examScore[dat.work$statAnxiety == 1 & dat.work$noteModality == 1]
+# Computing the mean    
+mean(dat.work$examScore[dat.work$statAnxiety == 1 & dat.work$noteModality == 1])
+# Length of vector (how many rows were subsetted)
+length(dat.work$examScore[dat.work$statAnxiety == 1 & dat.work$noteModality == 1])
+
+# Subset dataset for exam scores where stat anxiety is low OR notes were hand written on paper
+dat.work$examScore[dat.work$statAnxiety == 1 | dat.work$noteModality == 1] # different scores subsetted than using AND
+# Computing the mean    
+mean(dat.work$examScore[dat.work$statAnxiety == 1 | dat.work$noteModality == 1]) # different mean than using AND
+# Length of vector (how many rows were subsetted)
+length(dat.work$examScore[dat.work$statAnxiety == 1 | dat.work$noteModality == 1]) # many more rows subsetted than using AND
+
+# Can string together many conditional subsets using & and/or |
+```
+
+*There are also many other logical operators!*
+
+*Less than/less than or equal to logical operator (\< or \<=). Also works for greater than/greater than or equal to (\> or \>=).*
+
+```{r}
+# Subset exam scores where the minutes slept was less than 70
+dat.work$examScore[dat.work$minSleep < 70]
+# Computing the mean    
+mean(dat.work$examScore[dat.work$minSleep < 70])
+# Length of vector (how many rows were subsetted)
+length(dat.work$examScore[dat.work$minSleep < 70])
+
+### Less than or equal to <=
+dat.work$examScore[dat.work$minSleep <= 70]
+# Computing the mean    
+mean(dat.work$examScore[dat.work$minSleep <= 70])
+# Length of vector (how many rows were subsetted)
+length(dat.work$examScore[dat.work$minSleep <= 70]) # in this case, the same number of observations. It would only change if people slept for exactly 70 minutes.
+
+# can look at same scores, but for minutes slept > or >= 70 
+```
+
+*More information is provided here:* - https://www.statmethods.net/management/operators.html - https://www.statmethods.net/management/subset.html
+
+### End of script

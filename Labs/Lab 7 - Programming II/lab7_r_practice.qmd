@@ -1,0 +1,80 @@
+---
+title: "R Training Session"
+author: Jacob Coutts
+format: docx
+editor: visual
+---
+
+-   Use this to practice reading in .csv files and manipulating the data.
+
+## Step 1: Read in the data.
+
+First, let's read in the data so we can practice running some analyses. Either download the data from Jupyter/lab page and upload it or just run the code if it's all in Jupyter.
+
+```{r}
+NAME_YOUR_DATA_FRAME_YOUR_NAME_AND_USE_THIS_FROM_HERE_ON_OUT <- read.table("REPLACE_THIS_WITH_THE_NAME_OF_THE_FILE.csv",sep=",",header=TRUE)
+```
+
+## Step 2: Change the names of the columns in R.
+
+There are four columns in the data, the last two are named *X* and *Y*. (It looks like they got unnamed somehow!) Please change these to depression_TOT and optimism_TOT, respectively, so we know what we're working with.
+
+```{r}
+names(DATAFRAMENAME) # will give you the column names of the data frame
+names(DATAFRAMENAME) <- c("Check","Test") # will change the names of the first two columns to 1 and 2. We don't want that, so don't run this code. 
+names(DATAFRAMENAME)[3:4] <- c() # what will this do and why?? 
+```
+
+## Step 3: Explore the data.
+
+-   Now, let's explore the data with the summary command.
+-   Calculate the mean and standard deviation of depression_TOT and optimism_TOT. You should get 2.90 (0.622) and 20.957 (12.02), respectively.
+-   How many observations are in the dataset? How can you tell this? (Hint, look for a command that shows you the number of ROWS. That's two hints in one.)
+
+```{r}
+# modify this to fit your problem
+summary()
+```
+
+## Step 4: Analyzing data.
+
+I want to conduct a few different analyses on these data.
+
+-   First, compute the correlation between depression_TOT and optimism_TOT. You should use the cor.test() function to do this. (Hint: The correlation is negative and starts with a -0.5...) What is the p-value? Is this statistically significant?
+
+-   Now, I want to compare the scores of men and women on depression in the sample. We can use the gender variable as a basis for this. 0 means the respondent identified as a man and 1 means the respondent identified as a woman. (No other genders were observed in this sample.) How can I do this? (Hint: t-...?) What is the *p*-value? Is this statistically significant? (Hint: the *p*-value for this test starts as .01...)
+
+```{r}
+# to compute correlation between two variables
+cor.test()
+# to compare two groups on another variable
+t.test()
+```
+
+## Step 5: Visualizing the data.
+
+Now, let's use ggplot to bring it all together.
+
+-   How do we visualize the relationship between two numeric variables? Which plot should we use?
+
+-   What about for the relationship between gender and depression?
+
+```{r}
+# for numeric x and y 
+ggplot(REPLACE_WITH_NAME_OF_YOUR_DATA, aes(x=REPLACE_WITH_NAME_OF_YOUR_X, y=REPLACE_WITH_NAME_OF_YOUR_Y)) + 
+  geom_point() + 
+  geom_jitter() + 
+  ggtitle("GIVE AN INFORMATIVE TITLE.") + 
+  labs(y="REPLACE WITH OUTCOME NAME", x = "REPLACE WITH PREDICTOR NAME")
+
+# for dichotomous x and numeric y
+ggplot(REPLACE_WITH_NAME_OF_YOUR_DATA, aes(x=REPLACE_WITH_NAME_OF_YOUR_X, y=REPLACE_WITH_NAME_OF_YOUR_Y)) + 
+  geom_point() + 
+  geom_jitter() + 
+  ggtitle("GIVE AN INFORMATIVE TITLE.") + 
+  labs(y="REPLACE WITH OUTCOME NAME", x = "REPLACE WITH PREDICTOR NAME")
+```
+
+### End of script
+
+Render as a .docx or .html and upload to the progress report!
