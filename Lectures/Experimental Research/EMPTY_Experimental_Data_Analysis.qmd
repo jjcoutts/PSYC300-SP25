@@ -1,0 +1,140 @@
+---
+title: "EMPTY_Experimental_Data_Analysis"
+author: "PSYC300"
+format: docx
+editor: visual
+---
+
+## The Paper
+
+Kampfer, K., Leischnig, A., Ivens, B. S., & Spence, C. (2017).
+Touch-flavor transference: Assessing the effect of packaging weight on
+gustatory evaluations, desire for food and beverages, and willingness to
+pay. *PloS one*, 12(10), e0186121.
+
+Companies influence consumers in subtle ways when trying to persuade
+them to purchase a product. Things like package shape, material, use of
+color, and font can change consumer perception of a product's quality.
+One such factor is package weight. These researchers proposed that the
+weight of a package would influence how willing one would be to purchase
+that product.
+
+Participants were measured on a battery of constructs including
+perceptions of flavor, willingness to purchase, biological sex, and age.
+These data are a subset of the original data collected in the study. The
+analyses we do will not necessarily emulate the ones in the paper.
+
+Understanding potential reasons why one may purchase a product can
+empower consumers to not fall for tricks that manufacturers play like
+package weight.
+
+## The Variables
+
+**WEIGHT:** Whether the participates ate chocolate from a weighted (2)
+wrapper or not (1).
+
+**FLAV_INT:** A self-report measure of the perceived  flavor intensity
+of the chocolate. One item on a scale of 1-7.
+
+**PURCHASE:** An open-ended question coded on a scale of 1-10, where
+larger values indicate a greater willingness to purchase the product.
+
+**SEX:** The participant's biological sex (1 = Male, 2 = Female).
+
+**AGE:** The participant's age (standardized).
+
+For all constructs, higher values = greater levels of construct.
+
+## The Analysis
+
+We are going to fit a model to the data with their experimental group
+(heavy/light wrapper; WEIGHT) as the predictor and their purchasing
+likelihood as the outcome (MCIVIL).
+
+### Load the Required Packages
+
+We need to read in [**ggplot2**]{.underline} and
+[**jtools**]{.underline}.
+
+```{r}
+
+```
+
+### Read in the Data
+
+If you're working on Jupyter, this is in the same folder as the file so
+you won't need the file path.
+
+```{r}
+
+```
+
+### Generate Descriptive Statistics
+
+Use the summary command.
+
+```{r}
+
+```
+
+### Visualize the Data
+
+What visualization would be appropriate for a dichotomous predictor and
+continuous outcome?
+
+**Answer:**
+
+```{r}
+ggplot(data = choc, aes(x = as.factor(weight), y = purchase)) +
+  geom_boxplot() + 
+  labs(x = "Condition (1 = Unweighted Wrapper, 2 = Weighted Wrapper", y = "Purchasing Intent") + 
+  jtools::theme_apa()
+```
+
+How do the assumptions look?
+
+-   Linearity:
+
+-   Homogeneity of variance:
+
+-   Normality of residuals: If you want, you can check this in the
+    "Model" section using the command hist(resid(model_name))
+
+### Fit the Model to the Data
+
+What test should you run? (Note: The command in R is the same.)
+
+**Answer:**
+
+```{r}
+# run the analysis between the weight and purchase variables
+
+```
+
+What are the results? Try in APA format.
+
+**Answer:**
+
+### Exploratory Data Analysis
+
+Run the code below if you want to explore the relationship between other
+variables in the dataset. You can also test out other relationships
+you're interested in! (Or just ignore; the code below will render just
+fine.)
+
+```{r}
+ggplot(data = choc, aes(x = as.factor(weight), y = flav_eval)) +
+  geom_boxplot() + 
+  labs(x = "Flavor Evaluation", y = "Flavor Intensity") + 
+  jtools::theme_apa()
+#t.test()
+
+# exploratory data analysis
+ggplot(data = choc, aes(x = flav_eval, y = purchase)) +
+  geom_point() + 
+  labs(x = "Flavor Evaluation", y = "Purchasing Intent") + 
+  jtools::theme_apa()
+cor.test(choc$flav_eval, choc$flav_int)
+```
+
+## End of script
