@@ -1,0 +1,140 @@
+---
+title: "COMPLETE_Experimental_Data_Analysis"
+author: "PSYC300"
+format: docx
+editor: visual
+---
+
+## The Paper
+
+Kampfer, K., Leischnig, A., Ivens, B. S., & Spence, C. (2017). Touch-flavor transference: Assessing the effect of packaging weight on gustatory evaluations, desire for food and beverages, and willingness to pay. *PloS one*, 12(10), e0186121.
+
+Companies influence consumers in subtle ways when trying to persuade them to purchase a product. Things like package shape, material, use of color, and font can change consumer perception of a product's quality. One such factor is package weight. These researchers proposed that the weight of a package would influence how willing one would be to purchase that product.
+
+Participants were measured on a battery of constructs including perceptions of flavor, willingness to purchase, biological sex, and age. These data are a subset of the original data collected in the study. The analyses we do will not necessarily emulate the ones in the paper.
+
+Understanding potential reasons why one may purchase a product can empower consumers to not fall for tricks that manufacturers play like package weight.
+
+## The Variables
+
+**WEIGHT:** Whether the participates ate chocolate from a weighted (2) wrapper or not (1).
+
+**FLAV_INT:** A self-report measure of the perceived flavor intensity of the chocolate. One item on a scale of 1-7.
+
+**PURCHASE:** An open-ended question coded on a scale of 1-10, where larger values indicate a greater willingness to purchase the product.
+
+**SEX:** The participant's biological sex (1 = Male, 2 = Female).
+
+**AGE:** The participant's age (standardized).
+
+For all constructs, higher values = greater levels of construct.
+
+## The Analysis
+
+We are going to fit a model to the data with their experimental group (heavy/light wrapper; WEIGHT) as the predictor and their purchasing likelihood as the outcome (MCIVIL).
+
+### Load the Required Packages
+
+We need to read in [**ggplot2**]{.underline} and [**jtools**]{.underline}.
+
+```{r}
+library(ggplot2) # for data visualization
+library(jtools) # for APA formatting in figures
+```
+
+### Read in the Data
+
+If you're working on Jupyter, this is in the same folder as the file so you won't need the file path.
+
+```{r}
+# read data into an object called choc
+choc <- read.csv(file = "~/PSYC300-SP25/Lectures/Experimental Research/chocolate_data.csv")
+# replace first variable name with "weight" to remove X...
+names(choc)[1] <- "weight"
+```
+
+### Generate Descriptive Statistics
+
+Use the summary command.
+
+```{r}
+# generate summary statistics of all variables
+summary(choc)
+# look at breakdown of groups
+table(choc$weight)
+```
+
+### Visualize the Data
+
+What visualization would be appropriate for a dichotomous predictor and continuous outcome?
+
+**Answer:** Boxplot
+
+```{r}
+# plot weight condition by purchasing intent 
+ggplot(data = choc, aes(x = as.factor(weight), y = purchase)) +
+  geom_boxplot() + 
+  labs(x = "Condition (1 = Unweighted Wrapper, 2 = Weighted Wrapper", y = "Purchasing Intent") + 
+  jtools::theme_apa() # make APA formatting
+```
+
+How do the assumptions look?
+
+-   Linearity: Assumption of linearity seems reasonable.
+
+-   Homogeneity of variance: The assumption of homogeneity of variance appears reasonable.
+
+-   Normality of residuals: If you want, you can check this in the "Model" section using the command hist(resid(model_name))
+
+### Fit the Model to the Data
+
+What test should you run? (Note: The command in R is the same.)
+
+**Answer:** Independent groups *t*-test
+
+```{r}
+# run the analysis between the weight and purchase variables
+# you need var.equal=TRUE or else it will pool the variances, which will do a different test than the normal-theory one we are accustomed to
+# as.factor() around the weight variable let's R know to treat the weight condition as a categorical factor (which it is)
+t.test(choc$purchase ~ as.factor(choc$weight), var.equal= TRUE)
+
+# this won't work because it will treat each variable as a vector to compare the means of
+#t.test(choc$purchase, choc$weight)
+```
+
+What are the results? Try in APA format.
+
+**Answer:** The difference in purchasing likelihood between the two groups was not statistically significant, *t*(137) = -0.35, *p* = .73.
+
+### Exploratory Data Analysis
+
+Run the code below if you want to explore the relationship between other variables in the dataset. You can also test out other relationships you're interested in! (Or just ignore; the code below will render just fine.)
+
+```{r}
+# plot weight condition by flavor intensity
+ggplot(data = choc, aes(x = as.factor(weight), y = flav_int)) +
+  geom_boxplot() + 
+  labs(x = "Weight", y = "Flavor Intensity") + 
+  jtools::theme_apa()
+# there appears to be an effect here
+
+# run t-test to see if the apparent difference is significant
+# as.factor() lets R know to treat the weight variable as a categorical factor (which it is)
+t.test(choc$flav_int ~ as.factor(choc$weight), var.equal=TRUE)
+# those in the heavier wrapper condition perceived the flavor to be more intense!
+
+# plot perceived flavor intensity by purchasing intent
+ggplot(data = choc, aes(x = flav_int, y = purchase)) +
+  geom_point() + 
+  labs(x = "Flavor Intensity", y = "Purchasing Intent") + 
+  jtools::theme_apa()
+# there appears to be a significant, positive association here
+
+# test correlation between flavor intensity and purchasing likelihood
+cor.test(choc$purchase, choc$flav_int)
+# the correlation was significant!
+```
+
+Although there was no difference between the two wrapper weight conditions in their intent to purchase the product, the weight of the wrapper affected the perceived intensity of the flavor of the chocolate, which in-turn increased the likelihood of purchasing the chocolate. This is the idea of an indirect effect, which we will cover in more detail in two lectures.
+
+## End of script
