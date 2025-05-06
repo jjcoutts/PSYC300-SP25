@@ -1,4 +1,3 @@
-# R script created by Jacob J. Coutts
 # Within-Subjects Designs Analysis
 # PSYC300
 
